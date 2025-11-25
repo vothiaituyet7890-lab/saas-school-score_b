@@ -8,11 +8,21 @@ export default function RegisterPage() {
   const [role, setRole] = useState('STUDENT'); // default role
   const [error, setError] = useState('');
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL; // backend URL
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
     try {
-      const response = await axios.post('/api/auth/register', { name, email, password, role });
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
+        name,
+        email,
+        password,
+        role
+      });
+
+      console.log('Response:', response.data); // debug
 
       // Lưu token vào localStorage
       localStorage.setItem('token', response.data.token);
@@ -24,7 +34,7 @@ export default function RegisterPage() {
       if (userRole === 'STUDENT') window.location.href = '/dashboard-student';
 
     } catch (err) {
-      console.error(err);
+      console.error('Registration error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Registration failed');
     }
   };
